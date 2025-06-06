@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ExtractedData } from '../types/types';
+import InvoiceProcessor from './InvoiceProcessor';
  
 
 const ResultContainer = styled.div`
@@ -108,6 +109,7 @@ interface ResultDisplayProps {
 
 const ResultDisplay: React.FC<ResultDisplayProps> = ({ data }) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [drawIndex, setDrawIndex] = useState<number | null>(null);
 
   const copyToClipboard = async (text: string, index: number) => {
     try {
@@ -120,7 +122,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ data }) => {
   };
 
   const exportAllData = () => {
-    const allText = data.map(item => 
+    const allText = data.map(item =>
       `=== ${item.fileName} ===\n${item.extractedText}\n\n`
     ).join('');
     
@@ -162,16 +164,26 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ data }) => {
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <WordCount>
-                Words: {getWordCount(item.extractedText)} | 
+                Words: {getWordCount(item.extractedText)} |
                 Characters: {item.extractedText.length}
               </WordCount>
               
-              <CopyButton 
+              <CopyButton
                 onClick={() => copyToClipboard(item.extractedText, index)}
               >
                 {copiedIndex === index ? '✅ Copied!' : '📋 Copy'}
               </CopyButton>
             </div>
+            <div style={{ marginTop: 12, textAlign: 'right' }}>
+              <ExportButton onClick={() => setDrawIndex(drawIndex === index ? null : index)}>
+                {drawIndex === index ? 'Hide Draw' : 'Display Draw'}
+              </ExportButton>
+            </div>
+            {drawIndex === index && (
+              <div style={{ marginTop: 16 }}>
+                <InvoiceProcessor />
+              </div>
+            )}
           </ResultCard>
         ))}
       </ResultGrid>

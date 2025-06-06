@@ -9,3 +9,33 @@ export interface ExtractedData {
   extractedText: string;
   timestamp: string;
 }
+
+export interface InvoiceItem {
+  qty: number;
+  sku: string;
+  description: string;
+  price: number;
+  ext: number;
+  nontaxable: string;
+}
+
+export interface InvoiceData {
+  vendorId: string;
+  vendorName: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  invoiceAmount: number;
+  invoiceStatus: string;
+  partnerStatus: string;
+  paymentDue: string;
+  customer: string;
+  customerAddress: string;
+  accountNumber: string;
+  poNumber: string;
+  items: InvoiceItem[];
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  grandTotal: number;
+  mirn: string;
+}
