@@ -38,4 +38,5 @@ export interface InvoiceData {
   shipping: number;
   grandTotal: number;
   mirn: string;
+  notes: string; // Added to support extraction of Notes column from summary table
 }

@@ -109,7 +109,7 @@ interface ResultDisplayProps {
 
 const ResultDisplay: React.FC<ResultDisplayProps> = ({ data }) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-  const [drawIndex, setDrawIndex] = useState<number | null>(null);
+  // Removed drawIndex and Draw button logic
 
   const copyToClipboard = async (text: string, index: number) => {
     try {
@@ -174,16 +174,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ data }) => {
                 {copiedIndex === index ? '✅ Copied!' : '📋 Copy'}
               </CopyButton>
             </div>
-            <div style={{ marginTop: 12, textAlign: 'right' }}>
-              <ExportButton onClick={() => setDrawIndex(drawIndex === index ? null : index)}>
-                {drawIndex === index ? 'Hide Draw' : 'Display Draw'}
-              </ExportButton>
-            </div>
-            {drawIndex === index && (
-              <div style={{ marginTop: 16 }}>
-                <InvoiceProcessor />
-              </div>
-            )}
+            {/* Removed Draw button and InvoiceProcessor from result card */}
           </ResultCard>
         ))}
       </ResultGrid>

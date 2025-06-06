@@ -63,63 +63,101 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices }) => {
       {invoices.map((invoice, index) => (
         <Accordion key={`${invoice.invoiceNumber}-${index}`} sx={{ mb: 2 }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: { xs: 'column', sm: 'row' }, 
-              gap: 2, 
-              width: '100%',
-              alignItems: { xs: 'flex-start', sm: 'center' }
-            }}>
-              <Typography variant="h6" sx={{ minWidth: 150 }}>
-                Invoice #{invoice.invoiceNumber}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ minWidth: 100 }}>
-                {formatDate(invoice.invoiceDate)}
-              </Typography>
-              <Typography variant="h6" color="primary" sx={{ minWidth: 120 }}>
-                {formatCurrency(invoice.grandTotal)}
-              </Typography>
-              <Chip 
-                label={invoice.invoiceStatus} 
-                color={getStatusColor(invoice.invoiceStatus)}
-                size="small"
-              />
-              <Chip 
-                label={invoice.partnerStatus} 
-                color={getStatusColor(invoice.partnerStatus)}
-                size="small"
-                variant="outlined"
-              />
+            <Box sx={{ width: '100%' }}>
+              <TableContainer>
+                <Table size="small" sx={{ width: '100%' }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 600, border: 'none', pl: 0 }}>Vendor ID</TableCell>
+                      <TableCell sx={{ fontWeight: 600, border: 'none' }}>Vendor Name</TableCell>
+                      <TableCell sx={{ fontWeight: 600, border: 'none' }}>Invoice Number</TableCell>
+                      <TableCell sx={{ fontWeight: 600, border: 'none' }}>Invoice Date</TableCell>
+                      <TableCell sx={{ fontWeight: 600, border: 'none' }}>Invoice Amount</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell sx={{ border: 'none', pl: 0 }}>{invoice.vendorId}</TableCell>
+                      <TableCell sx={{ border: 'none' }}>{invoice.vendorName}</TableCell>
+                      <TableCell sx={{ border: 'none' }}>{invoice.invoiceNumber}</TableCell>
+                      <TableCell sx={{ border: 'none' }}>{formatDate(invoice.invoiceDate)}</TableCell>
+                      <TableCell sx={{ border: 'none' }}>{formatCurrency(invoice.grandTotal)}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Box>
           </AccordionSummary>
           
           <AccordionDetails>
             <Stack spacing={3}>
-              {/* Invoice and Customer Details */}
-              <Box sx={{ 
-                display: 'flex', 
-                flexDirection: { xs: 'column', md: 'row' }, 
-                gap: 3 
-              }}>
-                <Card variant="outlined" sx={{ flex: 1 }}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>Invoice Details</Typography>
-                    <Stack spacing={1}>
-                      <Typography><strong>Vendor:</strong> {invoice.vendorName}</Typography>
-                      <Typography><strong>Vendor ID:</strong> {invoice.vendorId}</Typography>
-                      <Typography><strong>Payment Due:</strong> {formatDate(invoice.paymentDue)}</Typography>
-                      <Typography><strong>PO Number:</strong> {invoice.poNumber}</Typography>
-                      <Typography><strong>Account:</strong> {invoice.accountNumber}</Typography>
-                      <Typography><strong>MIRN:</strong> {invoice.mirn}</Typography>
-                    </Stack>
-                  </CardContent>
-                </Card>
+              {/* Removed duplicate Invoice and Customer Details cards */}
 
-                <Card variant="outlined" sx={{ flex: 1 }}>
+              {/* Summary and Customer Info Table */}
+              <Box sx={{ mb: 2 }}>
+                <Card variant="outlined">
                   <CardContent>
-                    <Typography variant="h6" gutterBottom>Customer Details</Typography>
-                    <Typography><strong>Customer:</strong> {invoice.customer}</Typography>
-                    <Typography><strong>Address:</strong> {invoice.customerAddress}</Typography>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
+                      {/* Summary Table */}
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Summary</Typography>
+                        <TableContainer>
+                          <Table size="small">
+                            <TableBody>
+                              <TableRow>
+                                <TableCell><strong>Invoice #</strong></TableCell>
+                                <TableCell>{invoice.invoiceNumber}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Invoice Status</strong></TableCell>
+                                <TableCell>{invoice.invoiceStatus}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Partner Status</strong></TableCell>
+                                <TableCell>{invoice.partnerStatus}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Invoice Date</strong></TableCell>
+                                <TableCell>{formatDate(invoice.invoiceDate)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Service Date</strong></TableCell>
+                                <TableCell>{formatDate(invoice.invoiceDate)}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Payment Due</strong></TableCell>
+                                <TableCell>{formatDate(invoice.paymentDue)}</TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </Box>
+                      {/* Customer Table */}
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Customer</Typography>
+                        <TableContainer>
+                          <Table size="small">
+                            <TableBody>
+                              <TableRow>
+                                <TableCell><strong>Name</strong></TableCell>
+                                <TableCell>{invoice.customer}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell><strong>Address</strong></TableCell>
+                                <TableCell>
+                                  {invoice.customerAddress && invoice.customerAddress.split(/,|\n/).map((line, idx) => (
+                                    <span key={idx}>
+                                      {line.trim()}
+                                      <br />
+                                    </span>
+                                  ))}
+                                </TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </Box>
+                    </Box>
                   </CardContent>
                 </Card>
               </Box>
@@ -148,7 +186,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices }) => {
                           <TableCell align="right">{formatCurrency(item.price)}</TableCell>
                           <TableCell align="right">{formatCurrency(item.ext)}</TableCell>
                           <TableCell align="center">
-                            <Chip 
+                            <Chip
                               label={item.nontaxable === 'NO' ? 'Yes' : 'No'}
                               color={item.nontaxable === 'NO' ? 'success' : 'error'}
                               size="small"
@@ -165,10 +203,10 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices }) => {
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="h6" gutterBottom>Invoice Totals</Typography>
-                  <Box sx={{ 
-                    display: 'flex', 
+                  <Box sx={{
+                    display: 'flex',
                     flexDirection: { xs: 'column', sm: 'row' },
-                    gap: 2 
+                    gap: 2
                   }}>
                     <Box sx={{ flex: 1 }}>
                       <Typography><strong>Subtotal:</strong></Typography>
