@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -13,22 +13,14 @@ import {
   Typography,
   Box,
   Chip,
-  Button,
-  CircularProgress,
-  Alert,
   Card,
   CardContent,
-
-  Divider,
-  Grid
+  Stack,
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
-  CloudUpload as CloudUploadIcon,
   Receipt as ReceiptIcon,
-  Download as DownloadIcon
 } from '@mui/icons-material';
-import { useDropzone } from 'react-dropzone';
 import { InvoiceData } from '../types/types';
 
 interface InvoiceTableProps {
@@ -51,7 +43,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices }) => {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
     switch (status.toLowerCase()) {
       case 'sent': return 'success';
       case 'pending approval': return 'warning';
@@ -71,72 +63,69 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices }) => {
       {invoices.map((invoice, index) => (
         <Accordion key={`${invoice.invoiceNumber}-${index}`} sx={{ mb: 2 }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={3}>
-                <Typography variant="h6">
-                  Invoice #{invoice.invoiceNumber}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={2}>
-                <Typography variant="body2" color="text.secondary">
-                  {formatDate(invoice.invoiceDate)}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={2}>
-                <Typography variant="h6" color="primary">
-                  {formatCurrency(invoice.grandTotal)}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={2}>
-                <Chip 
-                  label={invoice.invoiceStatus} 
-                  color={getStatusColor(invoice.invoiceStatus)}
-                  size="small"
-                />
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Chip 
-                  label={invoice.partnerStatus} 
-                  color={getStatusColor(invoice.partnerStatus)}
-                  size="small"
-                  variant="outlined"
-                />
-              </Grid>
-            </Grid>
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: { xs: 'column', sm: 'row' }, 
+              gap: 2, 
+              width: '100%',
+              alignItems: { xs: 'flex-start', sm: 'center' }
+            }}>
+              <Typography variant="h6" sx={{ minWidth: 150 }}>
+                Invoice #{invoice.invoiceNumber}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ minWidth: 100 }}>
+                {formatDate(invoice.invoiceDate)}
+              </Typography>
+              <Typography variant="h6" color="primary" sx={{ minWidth: 120 }}>
+                {formatCurrency(invoice.grandTotal)}
+              </Typography>
+              <Chip 
+                label={invoice.invoiceStatus} 
+                color={getStatusColor(invoice.invoiceStatus)}
+                size="small"
+              />
+              <Chip 
+                label={invoice.partnerStatus} 
+                color={getStatusColor(invoice.partnerStatus)}
+                size="small"
+                variant="outlined"
+              />
+            </Box>
           </AccordionSummary>
           
           <AccordionDetails>
-            <Grid container spacing={3}>
-              {/* Invoice Details */}
-              <Grid item xs={12} md={6}>
-                <Card variant="outlined">
+            <Stack spacing={3}>
+              {/* Invoice and Customer Details */}
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', md: 'row' }, 
+                gap: 3 
+              }}>
+                <Card variant="outlined" sx={{ flex: 1 }}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>Invoice Details</Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Stack spacing={1}>
                       <Typography><strong>Vendor:</strong> {invoice.vendorName}</Typography>
                       <Typography><strong>Vendor ID:</strong> {invoice.vendorId}</Typography>
                       <Typography><strong>Payment Due:</strong> {formatDate(invoice.paymentDue)}</Typography>
                       <Typography><strong>PO Number:</strong> {invoice.poNumber}</Typography>
                       <Typography><strong>Account:</strong> {invoice.accountNumber}</Typography>
                       <Typography><strong>MIRN:</strong> {invoice.mirn}</Typography>
-                    </Box>
+                    </Stack>
                   </CardContent>
                 </Card>
-              </Grid>
 
-              {/* Customer Details */}
-              <Grid item xs={12} md={6}>
-                <Card variant="outlined">
+                <Card variant="outlined" sx={{ flex: 1 }}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>Customer Details</Typography>
                     <Typography><strong>Customer:</strong> {invoice.customer}</Typography>
                     <Typography><strong>Address:</strong> {invoice.customerAddress}</Typography>
                   </CardContent>
                 </Card>
-              </Grid>
+              </Box>
 
               {/* Items Table */}
-              <Grid item xs={12}>
+              <Box>
                 <Typography variant="h6" gutterBottom>Line Items</Typography>
                 <TableContainer component={Paper} variant="outlined">
                   <Table size="small">
@@ -170,42 +159,42 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices }) => {
                     </TableBody>
                   </Table>
                 </TableContainer>
-              </Grid>
+              </Box>
 
               {/* Totals */}
-              <Grid item xs={12}>
-                <Card variant="outlined">
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>Invoice Totals</Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={6} sm={3}>
-                        <Typography><strong>Subtotal:</strong></Typography>
-                        <Typography variant="h6">{formatCurrency(invoice.subtotal)}</Typography>
-                      </Grid>
-                      <Grid item xs={6} sm={3}>
-                        <Typography><strong>Tax:</strong></Typography>
-                        <Typography variant="h6">{formatCurrency(invoice.tax)}</Typography>
-                      </Grid>
-                      <Grid item xs={6} sm={3}>
-                        <Typography><strong>Shipping:</strong></Typography>
-                        <Typography variant="h6">{formatCurrency(invoice.shipping)}</Typography>
-                      </Grid>
-                      <Grid item xs={6} sm={3}>
-                        <Typography><strong>Grand Total:</strong></Typography>
-                        <Typography variant="h6" color="primary">
-                          {formatCurrency(invoice.grandTotal)}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
+              <Card variant="outlined">
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>Invoice Totals</Typography>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: 2 
+                  }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography><strong>Subtotal:</strong></Typography>
+                      <Typography variant="h6">{formatCurrency(invoice.subtotal)}</Typography>
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography><strong>Tax:</strong></Typography>
+                      <Typography variant="h6">{formatCurrency(invoice.tax)}</Typography>
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography><strong>Shipping:</strong></Typography>
+                      <Typography variant="h6">{formatCurrency(invoice.shipping)}</Typography>
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography><strong>Grand Total:</strong></Typography>
+                      <Typography variant="h6" color="primary">
+                        {formatCurrency(invoice.grandTotal)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Stack>
           </AccordionDetails>
         </Accordion>
       ))}
     </Box>
   );
 };
-
-

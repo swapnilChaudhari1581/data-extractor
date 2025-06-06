@@ -90,7 +90,7 @@ const InvoiceProcessor: React.FC = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Ferguson Invoice Processor
+        Draw Invoice Processor
       </Typography>
 
       {/* File Upload */}
